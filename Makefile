@@ -1,9 +1,9 @@
 #Makefile fuer mycommand
-all: mycommand
+all: myfind
 
-mycommand: *.c
-	gcc -g -Wall -o mycommand main.c
+myfind: *.c
+	gcc -g -Wall -o myfind main.c
 
 clean:
-	rm -f mycommand
+	rm -f myfind
 

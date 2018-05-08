@@ -2,6 +2,8 @@
 #include <getopt.h>
 #include <stdlib.h>
 #include <assert.h>
+#include <dirent.h>
+#include <errno.h>
 
 /**
  * Note:
@@ -70,7 +72,7 @@ int main(int argc, char *argv[]) {
     }
 
     // false count of options
-    if ((argc < optind + 1)) {
+    if ((argc < optind + 2)) {
         fprintf(stderr, "false number of arguments\n");
         print_usage();
     }
@@ -78,12 +80,36 @@ int main(int argc, char *argv[]) {
     /* Remaining arguments that are no options are in
      * argv[optind] bis argv[argc-1]
      */
+    int i = 0;
     while (optind < argc) {
         //aktuelles Argument: argv[optind]
-        printf("filename: %s\n", argv[optind]);
+        if(i++ == 0) {
+            printf("searchpath: %s\n", argv[optind]);
+
+            // logic
+
+            struct dirent* direntp;
+            DIR *dirp;
+            if((dirp = opendir(argv[optind])) == NULL) {
+                perror("Failed to open directory");
+                exit(EXIT_FAILURE);
+            }
+
+            while((direntp = readdir(dirp)) != NULL) {
+                printf("%s\n", direntp->d_name);
+            }
+
+//          EINTR means "This call did not succeed because it was interrupted. However, if you try again, it will probably work."
+            while((closedir(dirp) == -1) && (errno == EINTR));
+
+
+        } else {
+            printf("filename: %s\n", argv[optind]);
+        }
+
         optind++;
     }
 
-    return EXIT_SUCCESS;
+    exit(EXIT_SUCCESS);
 }
 

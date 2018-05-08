@@ -1,0 +1,26 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/vik/Repos/bes2_ue1/main.c
+stdio.h
+-
+getopt.h
+-
+stdlib.h
+-
+assert.h
+-
+dirent.h
+-
+errno.h
+-
+memory.h
+-
+ctype.h
+-
+

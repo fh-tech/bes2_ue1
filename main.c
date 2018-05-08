@@ -14,7 +14,7 @@
  * Output on stdout - unsorted
  */
 
-// globale Variable fuer den Programmnamen will be set automatically depending on executable name
+// global var for program name will be set automatically depending on executable name
 char *program_name = NULL;
 
 /**
@@ -28,34 +28,36 @@ void print_usage() {
 int main(int argc, char *argv[]) {
     int c;
     int error = 0;
-    char *inputFile = NULL;
-    int cOptionA = 0;
+    int recursive = 0;
+    int case_insensitive = 0;
 
     program_name = argv[0];
 
-    while ((c = getopt(argc, argv, "Ri:"))!=EOF) {
+    while ((c = getopt(argc, argv, "Ri"))!=EOF) {
         switch (c) {
             // option for recursive
             case 'R':
-                if (cOptionA) {
+                if(recursive) {
+                    fprintf(stderr, "multiple usage of flags is not allowed\n");
                     error = 1;
                     break;
                 }
-                cOptionA = 1;
-                printf("%s: parsing option a\n", program_name);
+                recursive = 1;
+                printf("recursive set\n");
                 break;
                 // case insensitive flag
             case 'i':
-                // option already used?
-                if (inputFile!=NULL) {
+                if(case_insensitive) {
+                    fprintf(stderr, "multiple usage of flags is not allowed\n");
                     error = 1;
                     break;
                 }
-                inputFile = optarg; /* optarg zeigt auf Optionsargument */
-                printf("%s: parsing option f, argument: %s\n", program_name, inputFile);
+                case_insensitive = 1;
+                printf("case insensitive set\n");
                 break;
                 // invalid option
-            case '?':error = 1;
+            case '?':
+                error = 1;
                 break;
             default: //cant reach here
                 assert(0); //assert used when this code part can normally be never reached
@@ -66,20 +68,22 @@ int main(int argc, char *argv[]) {
     if (error) {
         print_usage();
     }
+
     // false count of options
-    if ((argc < optind + 1) || (argc > optind + 2)) {
+    if ((argc < optind + 1)) {
+        fprintf(stderr, "false number of arguments\n");
         print_usage();
     }
 
-    /* Die restlichen Argumente, die keine Optionen sind, befinden sich in
+    /* Remaining arguments that are no options are in
      * argv[optind] bis argv[argc-1]
      */
     while (optind < argc) {
-        /* aktuelles Argument: argv[optind] */
-        printf("%s: parsing argument %s\n", program_name, argv[optind]);
-
+        //aktuelles Argument: argv[optind]
+        printf("filename: %s\n", argv[optind]);
         optind++;
     }
+
     return EXIT_SUCCESS;
 }
 

@@ -35,8 +35,13 @@ void printFoundFile(char *pid, char *filename, char *abs_path) {
  * @param name name of the file
  * @return char * with the absolute path
  */
-char *get_absPath(char *name) {
-    return realpath(name, NULL);
+char *get_absPath(char *dirname, char *name) {
+    char * combined_name = calloc(strlen(dirname) + strlen(name) + 3, 1);
+    strcat(combined_name, dirname);
+    strcat(combined_name, "/");
+    strcat(combined_name, name);
+
+    return realpath(combined_name, NULL);
 }
 
 /**
@@ -54,42 +59,70 @@ void to_lower(char *some_string) {
 }
 
 /**
+ * takes two char *s and if they should be compared case_insensitive
+ * @param string1
+ * @param string2
+ * @param case_insensitive
+ * @return 1 if equal 0 if not
+ */
+int compare_filenames(char *string1, char *string2, int case_insensitive) {
+    char * to_comp1 = malloc(strlen(string1) + 1);
+    strcpy(to_comp1, string1);
+
+    char * to_comp2 = malloc(strlen(string1) + 1);
+    strcpy(to_comp2, string2);
+
+    if (case_insensitive) {
+        to_lower(to_comp1);
+        to_lower(to_comp2);
+    }
+    if (strcmp(to_comp1, to_comp2)==0) {
+        free(to_comp1);
+        free(to_comp2);
+        return 1;
+    }
+    free(to_comp1);
+    free(to_comp2);
+    return 0;
+}
+
+/**
  * searches for a file in the specified folder
  * @param dirp directory to search in
  * @param toSearch filename that we search for
  * @param recursive if set searches in sub folders also
  * @param case_insensitive if set ignores case
  */
-void searchFile(char *dirname, char *toSearch, int case_insensitive, int recursive) {
+void searchFile(const char *dirname, char *toSearch, const int case_insensitive, const int recursive) {
     DIR *dir;
     struct dirent *entry;
 
     if (!(dir = opendir(dirname))) return;
 
     while ((entry = readdir(dir))!=NULL) {
-        if (entry->d_type==DT_DIR) {
-            if(recursive) {
-                if (!strcmp(entry->d_name, ".")==0 && !strcmp(entry->d_name, "..")==0) {
-                    searchFile(entry->d_name, toSearch, case_insensitive, recursive);
-                }
-            }
-        } else {
-            // print for debugging
-            printf("Name: %s Type: %d\n", entry->d_name, entry->d_type);
+        char *filename = entry->d_name;
 
-            size_t len = strlen(entry->d_name);
-            char filename[len];
-            strcpy(filename, entry->d_name);
-            if (case_insensitive) {
-                to_lower(filename);
-                to_lower(toSearch);
-            }
-            if (strcmp(filename, toSearch)==0) {
-//            printf("found match for %s: %s\n", toSearch, direntp->d_name);
-                char *abs_path = get_absPath(entry->d_name);
-                printFoundFile("", entry->d_name, abs_path);
-            }
+        switch(entry->d_type) {
+            case DT_DIR:
+                if (recursive) {
+                    if (!strcmp(filename, ".")==0 && !strcmp(filename, "..")==0) {
+                        searchFile(filename, toSearch, case_insensitive, recursive);
+                    }
+                }
+                break;
+            case DT_REG:
+                printf("Name: %s Type: %d\n", filename, entry->d_type);
+                int equal = compare_filenames(filename, toSearch, case_insensitive);
+                if (equal) {
+                    char *abs_path = get_absPath(dirname, filename);
+                    printFoundFile("", filename, abs_path);
+                    free(abs_path);
+                }
+                break;
+            default:
+                break;
         }
+
     }
     // EINTR is error code for disrupted -- dont forget to close the file
     while ((closedir(dir)==-1) && (errno==EINTR));
@@ -163,11 +196,11 @@ int main(int argc, char *argv[]) {
 
 
 
-   /* DIR *dirp = openDir(dirname);
-    if (dirp==NULL) {
-        perror("Failed to open directory");
-        exit(EXIT_FAILURE);
-    }*/
+    /* DIR *dirp = openDir(dirname);
+     if (dirp==NULL) {
+         perror("Failed to open directory");
+         exit(EXIT_FAILURE);
+     }*/
 
 
     /* Remaining arguments that are no options are in

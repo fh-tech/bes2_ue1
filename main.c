@@ -2,6 +2,8 @@
 #include <getopt.h>
 #include <stdlib.h>
 #include <assert.h>
+#include <sys/wait.h>
+
 
 #include "search.h"
 
@@ -81,9 +83,22 @@ int main(int argc, char *argv[]) {
     //starting second argument search for filenames
     char *dirname = argv[optind];
     optind++;
+
+    pid_t * the_slaves = calloc(argc-optind, sizeof(pid_t));
+    int i = 0;
     while (optind < argc) {
-        searchFile(dirname, argv[optind++], recursive, case_insensitive);
+        the_slaves[i++] = search_forked(dirname, argv[optind++], recursive, case_insensitive);
     }
+
+    int status = 0;
+    pid_t wpid = 0;
+    while ((wpid = wait(&status)) > 0)
+    {
+        printf("Exit status of %d was %d (%s)\n", (int)wpid, status,
+               (status > 0) ? "accept" : "reject");
+    }
+
+    free(the_slaves);
 
     exit(EXIT_SUCCESS);
 }

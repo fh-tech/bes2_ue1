@@ -8,11 +8,12 @@
 #include <errno.h>
 #include <memory.h>
 #include <ctype.h>
+#include <unistd.h>
 
 #include "search.h"
 
-void printFoundFile(char *pid, char *filename, char *abs_path) {
-    printf("%s: %s: %s\n", pid, filename, abs_path);
+void printFoundFile(pid_t pid, char *filename, char *abs_path) {
+    printf("%d: %s: %s\n", pid, filename, abs_path);
 }
 
 char *get_absPath(char *dirname, char *name) {
@@ -41,6 +42,21 @@ int compare_filenames(char *string1, char *string2, int case_insensitive) {
     return 1;
 }
 
+pid_t search_forked(const char *dirname, char *toSearch, int recursive, int case_insensitive) {
+    pid_t pid = fork();
+
+    switch(pid) {
+        case 0:
+            searchFile(dirname, toSearch, recursive, case_insensitive);
+            exit(EXIT_SUCCESS);
+        case -1:
+            fprintf(stderr, "Child could not be started.");
+            exit(EXIT_FAILURE);
+        default:
+            return pid;
+    }
+}
+
 void searchFile(const char *dirname, char *toSearch, int recursive, int case_insensitive) {
     DIR *dir;
     struct dirent *entry;
@@ -67,7 +83,8 @@ void searchFile(const char *dirname, char *toSearch, int recursive, int case_ins
                 int equal = compare_filenames(filename, toSearch, case_insensitive);
                 if (equal) {
                     char *abs_path = get_absPath(dirname, filename);
-                    printFoundFile("", filename, abs_path);
+
+                    printFoundFile(getpid(), filename, abs_path);
                     free(abs_path);
                 }
                 break;

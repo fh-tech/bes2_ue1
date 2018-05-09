@@ -11,7 +11,7 @@
  * @param filename the name of the file
  * @param abs_path the absolute path of the file
  */
-void printFoundFile(char *pid, char *filename, char *abs_path);
+void printFoundFile(pid_t pid, char *filename, char *abs_path);
 
 
 /**
@@ -40,5 +40,7 @@ int compare_filenames(char *string1, char *string2, int case_insensitive);
  */
 void searchFile(const char *dirname, char *toSearch, int case_insensitive, int recursive);
 
+
+pid_t search_forked(const char *dirname, char *toSearch, int recursive, int case_insensitive);
 
 #endif //BES_UE1_SEARCH_H

@@ -1,1 +1,1 @@
-/usr/bin/cc -g   CMakeFiles/BES_UE1.dir/main.c.o  -o BES_UE1 
+/usr/bin/cc -g   CMakeFiles/BES_UE1.dir/main.c.o CMakeFiles/BES_UE1.dir/search.c.o  -o BES_UE1 

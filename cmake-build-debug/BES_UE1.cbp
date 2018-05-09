@@ -79,6 +79,12 @@
 		<Unit filename="/home/vik/Repos/bes2_ue1/main.c">
 			<Option target="BES_UE1"/>
 		</Unit>
+		<Unit filename="/home/vik/Repos/bes2_ue1/search.c">
+			<Option target="BES_UE1"/>
+		</Unit>
+		<Unit filename="/home/vik/Repos/bes2_ue1/search.h">
+			<Option target="BES_UE1"/>
+		</Unit>
 		<Unit filename="/home/vik/Repos/bes2_ue1/CMakeLists.txt">
 			<Option virtualFolder="CMake Files\"/>
 		</Unit>

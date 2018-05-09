@@ -2,8 +2,8 @@
 all: myfind
 
 myfind: *.c
-	gcc -g -Wall -o myfind main.c
+	gcc -g -Wall -o myfind *.c
 
 clean:
-	rm -f myfind
+	rm -f myfind *.o
 

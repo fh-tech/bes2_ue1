@@ -5,6 +5,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_C
   "/home/vik/Repos/bes2_ue1/main.c" "/home/vik/Repos/bes2_ue1/cmake-build-debug/CMakeFiles/BES_UE1.dir/main.c.o"
+  "/home/vik/Repos/bes2_ue1/search.c" "/home/vik/Repos/bes2_ue1/cmake-build-debug/CMakeFiles/BES_UE1.dir/search.c.o"
   )
 set(CMAKE_C_COMPILER_ID "GNU")
 

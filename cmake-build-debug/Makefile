@@ -150,6 +150,33 @@ main.c.s:
 	$(MAKE) -f CMakeFiles/BES_UE1.dir/build.make CMakeFiles/BES_UE1.dir/main.c.s
 .PHONY : main.c.s
 
+search.o: search.c.o
+
+.PHONY : search.o
+
+# target to build an object file
+search.c.o:
+	$(MAKE) -f CMakeFiles/BES_UE1.dir/build.make CMakeFiles/BES_UE1.dir/search.c.o
+.PHONY : search.c.o
+
+search.i: search.c.i
+
+.PHONY : search.i
+
+# target to preprocess a source file
+search.c.i:
+	$(MAKE) -f CMakeFiles/BES_UE1.dir/build.make CMakeFiles/BES_UE1.dir/search.c.i
+.PHONY : search.c.i
+
+search.s: search.c.s
+
+.PHONY : search.s
+
+# target to generate assembly for a file
+search.c.s:
+	$(MAKE) -f CMakeFiles/BES_UE1.dir/build.make CMakeFiles/BES_UE1.dir/search.c.s
+.PHONY : search.c.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -162,6 +189,9 @@ help:
 	@echo "... main.o"
 	@echo "... main.i"
 	@echo "... main.s"
+	@echo "... search.o"
+	@echo "... search.i"
+	@echo "... search.s"
 .PHONY : help
 
 

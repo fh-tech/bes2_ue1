@@ -16,15 +16,8 @@ void printFoundFile(pid_t pid, char *filename, char *abs_path) {
     printf("%d: %s: %s\n", pid, filename, abs_path);
 }
 
-char *get_absPath(char *dirname, char *name) {
-    char *combined_name = calloc(strlen(dirname) + strlen(name) + 3, 1);
-    strcat(combined_name, dirname);
-    strcat(combined_name, "/");
-    strcat(combined_name, name);
-
-    char * real_path = realpath(combined_name, NULL);
-    free(combined_name);
-    //TODO: review how can this work - program can not know how long char * for real_path will be!
+char *get_absPath(const char *path) {
+    char * real_path = realpath(path, NULL);
     return real_path;
 }
 
@@ -33,7 +26,7 @@ int compare_filenames(char *string1, char *string2, int case_insensitive) {
     size_t len2 = strlen(string2);
     if(len1 != len2) return 0;
 
-    for(int i = 0; i < len1; i++) {
+    for(size_t i = 0; i < len1; i++) {
         char c1 = case_insensitive ? (char)tolower(string1[i]) : string1[i];
         char c2 = case_insensitive ? (char)tolower(string2[i]) : string2[i];
         if(c1 != c2) return 0;
@@ -57,13 +50,21 @@ pid_t search_forked(const char *dirname, char *toSearch, int recursive, int case
     }
 }
 
-void searchFile(const char *dirname, char *toSearch, int recursive, int case_insensitive) {
+char * build_newPath(const char * old_path, char * filename) {
+    // +3 because strlen does not count null termination + 1 byte for "/"
+    char * newPath = calloc(strlen(old_path) + strlen(filename) + 3, 1);
+    strcat(newPath, old_path);
+    strcat(newPath, "/");
+    strcat(newPath, filename);
+    return newPath;
+}
+
+void searchFile(const char *dirpath, char *toSearch, int recursive, int case_insensitive) {
     DIR *dir;
     struct dirent *entry;
 
-    if (!(dir = opendir(dirname))) {
-        fprintf(stderr, "Failed to open directory ");
-        perror(dirname);
+    if (!(dir = opendir(dirpath))) {
+        perror(dirpath);
         return;
     }
 
@@ -74,7 +75,9 @@ void searchFile(const char *dirname, char *toSearch, int recursive, int case_ins
             case DT_DIR: {
                 if (recursive) {
                     if (!strcmp(filename, ".") == 0 && !strcmp(filename, "..") == 0) {
-                        searchFile(filename, toSearch, case_insensitive, recursive);
+                        char * newPath = build_newPath(dirpath, filename);
+                        searchFile(newPath, toSearch, case_insensitive, recursive);
+                        free(newPath);
                     }
                 }
                 break;
@@ -82,9 +85,10 @@ void searchFile(const char *dirname, char *toSearch, int recursive, int case_ins
             case DT_REG: {
                 int equal = compare_filenames(filename, toSearch, case_insensitive);
                 if (equal) {
-                    char *abs_path = get_absPath(dirname, filename);
-
+                    char * combined_name = build_newPath(dirpath, filename);
+                    char *abs_path = get_absPath(combined_name);
                     printFoundFile(getpid(), filename, abs_path);
+                    free(combined_name);
                     free(abs_path);
                 }
                 break;

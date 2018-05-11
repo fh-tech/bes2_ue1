@@ -19,7 +19,7 @@ void printFoundFile(pid_t pid, char *filename, char *abs_path);
  * @param name name of the file
  * @return char * with the absolute path
  */
-char *get_absPath(char *dirname, char *name);
+char *get_absPath(const char *path);
 
 /**
  * takes two char *s and if they should be compared case_insensitive
@@ -38,9 +38,12 @@ int compare_filenames(char *string1, char *string2, int case_insensitive);
  * @param recursive if set searches in sub folders also
  * @param case_insensitive if set ignores case
  */
-void searchFile(const char *dirname, char *toSearch, int case_insensitive, int recursive);
+void searchFile(const char *dirpath, char *toSearch, int case_insensitive, int recursive);
 
+char * build_newPath(const char * old_path, char * filename);
 
 pid_t search_forked(const char *dirname, char *toSearch, int recursive, int case_insensitive);
+
+
 
 #endif //BES_UE1_SEARCH_H

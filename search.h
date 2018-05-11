@@ -21,6 +21,7 @@ void printFoundFile(pid_t pid, char *filename, char *abs_path);
  */
 char *get_absPath(const char *path);
 
+
 /**
  * takes two char *s and if they should be compared case_insensitive
  * @param string1
@@ -32,16 +33,32 @@ int compare_filenames(char *string1, char *string2, int case_insensitive);
 
 
 /**
- * searches for a file in the specified folder
- * @param dirp directory to search in
- * @param toSearch filename that we search for
- * @param recursive if set searches in sub folders also
- * @param case_insensitive if set ignores case
+ * searches for a file in dirpath and if recursive is set and a folder is found searches recursively in subfolders too
+ * @param dirpath relative or absolute path
+ * @param toSearch filename to be searched for
+ * @param case_insensitive exact match or case insensitive
+ * @param recursive search in subfolders too or not
  */
 void searchFile(const char *dirpath, char *toSearch, int case_insensitive, int recursive);
 
+
+/**
+ * combines strings old_path and filename like old_path/filename
+ * @param old_path
+ * @param filename
+ * @return char * of form old_path/filename
+ */
 char * build_newPath(const char * old_path, char * filename);
 
+
+/**
+ * searches for a file in a new process otherwise works like searchfile
+ * @param dirname
+ * @param toSearch
+ * @param recursive
+ * @param case_insensitive
+ * @return process id of the forked process
+ */
 pid_t search_forked(const char *dirname, char *toSearch, int recursive, int case_insensitive);
 
 

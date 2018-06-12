@@ -3,6 +3,8 @@
 #include <stdlib.h>
 #include <assert.h>
 #include <sys/wait.h>
+#include <asm/errno.h>
+#include <errno.h>
 
 
 #include "search.h"
@@ -54,7 +56,7 @@ int main(int argc, char *argv[]) {
                     break;
                 }
                 case_insensitive = 1;
-                printf("case insensitive set\n");
+//                printf("case insensitive set\n");
                 break;
                 // invalid option
             case '?':
@@ -91,17 +93,18 @@ int main(int argc, char *argv[]) {
         the_slaves[i++] = search_forked(dirname, argv[optind++], recursive, case_insensitive);
     }
 
+//        wait for ALL children to finish
+//        wait blocks caller until a child process terminates
     int status = 0;
-    pid_t wpid = 0;
-    // wait for ALL children to finish
-    while ((wpid = wait(&status)) > 0) {
-        printf("Exit status of %d was %d (%s)\n", (int) wpid, status,
-               (status > 0) ? "reject" : "accept");
+    while (wait(&status) > 0) {
+        if (WIFEXITED(status))
+            printf("OK: Child exited with exit status %d.\n", WEXITSTATUS(status));
+        else
+            printf("ERROR: Child has not terminated correctly.\n");
     }
 
     // free the pids
     free(the_slaves);
-
     exit(EXIT_SUCCESS);
 }
 

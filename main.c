@@ -93,14 +93,19 @@ int main(int argc, char *argv[]) {
         the_slaves[i++] = search_forked(dirname, argv[optind++], recursive, case_insensitive);
     }
 
-//        wait for ALL children to finish
-//        wait blocks caller until a child process terminates
+//    pid_t childpid = 0;
+//    while((childpid = waitpid(-1, NULL, WNOHANG))) {
+//        if((childpid == -1) && (errno != EINTR)) break;
+//    }
+
     int status = 0;
-    while (wait(&status) > 0) {
+    pid_t wpid;
+//     wait for ALL children to finish
+    while ((wpid = wait(&status)) > 0) {
         if (WIFEXITED(status))
-            printf("OK: Child exited with exit status %d.\n", WEXITSTATUS(status));
+            printf("OK: Child(%d) exited with exit status %d.\n", wpid, WEXITSTATUS(status));
         else
-            printf("ERROR: Child has not terminated correctly.\n");
+            printf("ERROR: Child(%d) has not terminated correctly.\n", wpid);
     }
 
     // free the pids

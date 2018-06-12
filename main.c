@@ -54,7 +54,7 @@ int main(int argc, char *argv[]) {
                     break;
                 }
                 case_insensitive = 1;
-//                printf("case insensitive set\n");
+                printf("case insensitive set\n");
                 break;
                 // invalid option
             case '?':

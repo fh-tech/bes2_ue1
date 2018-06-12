@@ -76,7 +76,7 @@ void searchFile(const char *dirpath, char *toSearch, int recursive, int case_ins
                 if (recursive) {
                     if (!strcmp(filename, ".") == 0 && !strcmp(filename, "..") == 0) {
                         char * newPath = build_newPath(dirpath, filename);
-                        searchFile(newPath, toSearch, case_insensitive, recursive);
+                        searchFile(newPath, toSearch, recursive, case_insensitive);
                         free(newPath);
                     }
                 }
@@ -87,7 +87,7 @@ void searchFile(const char *dirpath, char *toSearch, int recursive, int case_ins
                 if (equal) {
                     char * combined_name = build_newPath(dirpath, filename);
                     char *abs_path = get_absPath(combined_name);
-                    printFoundFile(getpid(), filename, abs_path);
+                    printFoundFile(getpid(), toSearch, abs_path);
                     free(combined_name);
                     free(abs_path);
                 }
